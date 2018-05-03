@@ -1,0 +1,39 @@
+version: '3.5'
+
+services:
+
+  nginx:
+    image: registry.valtech.dk/sugcon2018nginx:latest@sha256:43dac9d87b6bd65128f006ba3c96fd9e67f983c7e916404122d90c71ca308672
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: ingress
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: ingress
+    networks:
+      - www
+    deploy:
+      placement:
+        constraints:
+          - node.platform.os == linux
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 0s
+        order: start-first
+    secrets:
+      - fullchain.pem
+      - privkey.pem
+
+networks:
+  www:
+    external: true
+
+secrets:
+  fullchain.pem:
+    external: true
+  privkey.pem:
+    external: true

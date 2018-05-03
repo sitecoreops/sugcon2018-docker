@@ -1,0 +1,16 @@
+
+FROM microsoft/windowsservercore:1709 as dockercompose
+
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+ENV DOCKER_COMPOSE_VERSION=1.20.1
+
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; \
+    Invoke-WebRequest -Uri ('https://github.com/docker/compose/releases/download/{0}/docker-compose-Windows-x86_64.exe' -f $env:DOCKER_COMPOSE_VERSION) -OutFile 'C:\\docker-compose.exe' -UseBasicParsing
+
+FROM stefanscherer/docker-cli-windows as dockercli
+
+FROM jetbrains/teamcity-agent:2017.2.3-windowsservercore-1709
+
+COPY --from=dockercompose C:/docker-compose.exe C:/Windows/docker-compose.exe
+COPY --from=dockercli C:/docker.exe C:/Windows/docker.exe

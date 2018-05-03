@@ -1,0 +1,55 @@
+version: '3.5'
+
+services:
+
+  portainer:
+    image: portainer/portainer
+    command: --no-auth -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - target: 9000
+        published: 9000
+        protocol: tcp
+        mode: ingress
+    deploy:
+      placement:
+        constraints:
+          - node.platform.os == linux
+          - node.role == manager
+      replicas: 1
+
+  visualizer:
+    image: dockersamples/visualizer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - target: 8080
+        published: 8000
+        protocol: tcp
+        mode: ingress
+    deploy:
+      placement:
+        constraints:
+          - node.platform.os == linux
+          - node.role == manager
+      replicas: 1
+
+  teamcity-agent:
+    image: jetbrains/teamcity-agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - teamcity-agent-conf:/data/teamcity_agent/conf
+    environment:
+      - SERVER_URL=http://build-winvm0:80
+      - AGENT_NAME=deploy-agent
+    deploy:
+      placement:
+        constraints:
+          - node.platform.os == linux
+          - node.role == manager
+          - node.labels.data == yes
+      replicas: 1
+
+volumes:
+  teamcity-agent-conf:

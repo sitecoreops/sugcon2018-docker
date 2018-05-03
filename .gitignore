@@ -1,0 +1,16 @@
+/infrastructure/**/.terraform
+/infrastructure/**/*.tfstate*
+/infrastructure/**/*.tfvars
+
+/packages/
+.vs/
+bin/
+obj/
+*.user
+*.ncrunch*
+
+/data/
+/out/
+
+images/sql/*.dacpac
+other/*.backup

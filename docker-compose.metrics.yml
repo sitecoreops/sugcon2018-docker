@@ -1,0 +1,37 @@
+version: '3.6'
+
+services:
+
+  grafana:
+    image: grafana/grafana:5.0.4
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: ingress
+    deploy:
+      placement:
+        constraints:
+          - node.platform.os == linux
+          - node.labels.data == yes
+      replicas: 1
+
+  influxdb:
+    image: influxdb:1.5.1-alpine
+    environment: 
+      - INFLUXDB_DB=sugops
+    ports:
+      - target: 8086
+        published: 8086
+        protocol: tcp
+        mode: ingress
+    deploy:
+      placement:
+        constraints:
+          - node.platform.os == linux
+      replicas: 1
+
+volumes:
+  grafana-data:

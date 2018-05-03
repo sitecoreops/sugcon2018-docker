@@ -1,0 +1,14 @@
+FROM registry.valtech.dk/buildtools:2017
+
+WORKDIR C:/workspace/
+
+COPY nuget.config .
+COPY *.sln .
+COPY ./src/WebApp/packages.config ./src/WebApp/packages.config
+COPY ./src/WebApp/WebApp.csproj ./src/WebApp/WebApp.csproj
+RUN nuget restore
+
+COPY . .
+
+RUN msbuild .\src\WebApp\WebApp.csproj /m /v:m /p:Configuration=Release /p:DeployOnBuild=True /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:PublishUrl=c:\out\WebApp
+RUN (robocopy /E /NP /NJH /NJS .\src\WebApp.Items c:\out\WebApp\App_Data\serialization) ^& IF %ERRORLEVEL% LEQ 1 exit 0

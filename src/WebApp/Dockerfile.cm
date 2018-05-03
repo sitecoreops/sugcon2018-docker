@@ -1,0 +1,10 @@
+FROM registry.valtech.dk/sitecore:9.0.171219-xm1-cm
+
+ARG configuration=Release
+
+WORKDIR C:/inetpub/sc
+
+COPY . .
+
+RUN powershell -NoProfile -NoLogo -File ./App_Config/Invoke-XdtTransform.ps1 -Path ./Web.config -Destination ./Web.config -Xdt ./Web.$($env:configuration).config; \
+	Remove-Item ./Web.$($env:configuration).config -Force;

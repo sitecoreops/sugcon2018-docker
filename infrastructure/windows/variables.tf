@@ -1,0 +1,10 @@
+variable "count" {}
+variable "prefix" {}
+variable "location" {}
+variable "resource_group_name" {}
+variable "availability_set_id" {}
+variable "network_security_group_id" {}
+variable "subnet_id" {}
+variable "size" {}
+variable "admin_username" {}
+variable "admin_password" {}

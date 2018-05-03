@@ -1,0 +1,31 @@
+version: '2.3'
+
+services:
+
+  sql:
+    image: registry.valtech.dk/sitecore:9.0.171219-sql
+    volumes:
+      - .\data\sql:C:\Data
+    mem_limit: 3GB
+
+  solr:
+    image: registry.valtech.dk/sitecore:9.0.171219-solr
+    volumes:
+      - .\data\solr:C:\Data
+
+  cm:
+    image: webapp-cm:dev
+    build:
+      context: ./src/WebApp
+      dockerfile: Dockerfile.cm
+      args: 
+        configuration: Debug
+    entrypoint: powershell Watch-Directory C:/src C:/inetpub/sc
+    volumes:
+      - .\src\WebApp:C:\src
+      - .\src\WebApp.Items:C:\inetpub\sc\App_Data\serialization
+    ports:
+      - 8000:80
+    links:
+      - sql
+      - solr

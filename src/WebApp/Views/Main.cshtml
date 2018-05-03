@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <title>@Html.Sitecore().CurrentItem["Title"] - SUGCON 2018</title>
+    <style type="text/css">
+        body {
+            background-color: rgb(30, 30, 30);
+            color: white;
+            font-family: consolas;
+            font-size: 1.0em;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    @Html.Sitecore().Placeholder("content")
+</div>
+<div>
+    <h2>TEST 1</h2>
+</div>
+<div>
+    <h3>host: @Environment.MachineName.ToLowerInvariant(), role: @System.Configuration.ConfigurationManager.AppSettings["role:define"]</h3>
+</div>
+</body>
+</html>

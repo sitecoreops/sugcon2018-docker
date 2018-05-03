@@ -1,0 +1,103 @@
+version: '3.5'
+
+services:
+
+  sql:
+    image: registry.valtech.dk/sugcon2018sql:latest@sha256:91e7e5897a804bd5d27d6ce6a8e980e9412ab2595d1512d913f9e676c1b19377
+    networks: 
+      - backend
+    volumes:
+      - sql-data:c:\data
+    deploy:
+      resources:
+        reservations:
+          memory: 1000M
+        limits:
+          memory: 2000M
+      placement:
+        constraints:
+          - node.platform.os == windows
+          - node.labels.data == yes
+      replicas: 1
+      endpoint_mode: dnsrr
+
+  solr:
+    image: registry.valtech.dk/sugcon2018solr:latest@sha256:e5b37a6ebd7fd5fd178aaba616dc91226cb8a4a90466a15e223ad6433193de58
+    networks: 
+      - backend
+    volumes:
+      - solr-data:c:\data
+    deploy:
+      resources:
+        reservations:
+          memory: 800M
+        limits:
+          memory: 1500M
+      placement:
+        constraints:
+          - node.platform.os == windows
+          - node.labels.data == yes
+      replicas: 1
+      endpoint_mode: dnsrr
+
+  cm:
+    image: ${SERVICE_CM_IMAGE_DIGEST}
+    networks: 
+      - www
+      - backend
+    deploy:
+      resources:
+        reservations:
+          memory: 1000M
+        limits:
+          memory: 2000M
+      placement:
+        constraints:
+          - node.platform.os == windows
+      replicas: 1
+      endpoint_mode: dnsrr
+      update_config:
+        failure_action: rollback
+    healthcheck:
+      start_period: 3m
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      test: ["CMD", "powershell", "-NoProfile", "-NoLogo", "-File", "C:/inetpub/sc/App_Config/HealthCheck.ps1", "-Url", "http://localhost:80/sitecore/login/", "-AcceptedStatusCodes", "200"]
+
+  cd:
+    image: ${SERVICE_CD_IMAGE_DIGEST}
+    networks: 
+      - www
+      - backend
+    deploy:
+      resources:
+        reservations:
+          memory: 1000M
+        limits:
+          memory: 1500M
+      placement:
+        constraints:
+          - node.platform.os == windows
+      replicas: 4
+      endpoint_mode: dnsrr
+      update_config:
+        parallelism: 2
+        delay: 0s
+        order: start-first
+        failure_action: rollback
+    healthcheck:
+      start_period: 3m
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      test: ["CMD", "powershell", "-NoProfile", "-NoLogo", "-File", "C:/inetpub/sc/App_Config/HealthCheck.ps1", "-Url", "http://localhost:80/", "-AcceptedStatusCodes", "200,302"]
+
+networks:
+  www:
+    external: true
+  backend:
+
+volumes:
+  sql-data:
+  solr-data:

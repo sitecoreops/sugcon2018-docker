@@ -1,0 +1,38 @@
+body,
+html {
+    font-family: consolas;
+    background-color: #262626;
+}
+.tabs,
+#filter-wrapper {
+    display: none;
+}
+#vis-physical .node-meta {
+    font-size: 14px;
+    color: #636363;
+}
+#vis-physical .node {
+    width: 300px;
+}
+#app {
+    background-color: #262626;
+}
+#vis-physical .node-cluster-content {
+    background: #353535;
+    border: 1px solid #636363
+}
+#vis-physical .node-content {
+    background: #262626;
+    border: 1px solid #636363;
+    display: block;
+    min-height: 700px;
+}
+#vis-physical {
+    color: #c5c5c5;
+}
+#vis-physical .container {
+    font-size: 14px;
+    border-radius: 0px;
+    display: block;
+    margin-top: 9px;
+}
